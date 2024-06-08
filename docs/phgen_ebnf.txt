@@ -1,0 +1,47 @@
+(* EBNF (extended Backus-Naur Form) Notation of phgen script syntax is as follows *)
+
+phgen = block, {block};
+
+block = run_block
+      | data_block ;
+
+run_block = hash, block_name, "{",  block_definition, "}";
+
+data_block = at_sign, block_name, "{", data_definition, "}";
+
+block_definition = (block_key, ":", value, newline)*;
+
+data_definition = (data_key, ":", value, newline)*;
+
+block_key = [dollar], string;
+          | [double_underscore], string;
+
+data_key = quote, letter, {string}, quote;
+
+value = (quote, string, quote)
+      | number
+      | boolean
+      | JSON
+      | at_sign, block_name;
+
+block_name = letter, {block_name_term};
+
+block_name_term = letter
+                | digit
+                | underscore;
+
+comment = "//", string, newline; (* This is a phgen script comment *)
+
+dollar = "$";
+quote = """; (* A single double quote character *)
+double_underscore = "__";
+newline = "\n";
+underscore = "_";
+hash = "#";
+at_sign = "@";
+
+(* String can contain all printable characters *)
+(* letter includes all upper and lowercase alphabets *)
+(* number follows float64 *)
+(* boolean is true and false *)
+(* JSON is a valid JSON defintion *)
